@@ -1,0 +1,52 @@
+/* Dark Mode Styles (Default) */
+body {
+    font-family: Arial, sans-serif;
+    background-color: #181818;
+    color: #ffffff;
+    padding: 20px;
+}
+
+.container {
+    max-width: 600px;
+    margin: 0 auto;
+    background-color: #333;
+    padding: 20px;
+    border-radius: 5px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.button,
+button {
+    padding: 10px 15px;
+    background-color: #555;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.button:hover,
+button:hover {
+    background-color: #777;
+}
+
+/* Light Mode Styles */
+body.light-mode {
+    background-color: #f4f4f4;
+    color: #000;
+}
+
+body.light-mode .container {
+    background-color: #fff;
+}
+
+body.light-mode .button,
+body.light-mode button {
+    background-color: #333;
+    color: #fff;
+}
+
+body.light-mode .button:hover,
+body.light-mode button:hover {
+    background-color: #555;
+}

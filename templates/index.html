@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Raspberry Pi Control</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+</head>
+
+<body>
+    <div class="container">
+        <!-- Toggle Button for Dark/Light Mode -->
+        <button id="toggleModeBtn">Toggle Light Mode</button>
+
+        <!-- Set Temperature -->
+        <div class="control-section">
+            <label for="setTemp">Set Temperature:</label>
+            <input type="number" id="setTemp" step="0.1">
+            <button id="setTempBtn">Set</button>
+        </div>
+
+        <!-- Set Timer -->
+        <div class="control-section">
+            <label for="setTimer">Set Timer (HH:MM):</label>
+            <input type="text" id="setTimer" pattern="\d{1,2}:\d{2}">
+            <button id="setTimerBtn">Set Timer</button>
+        </div>
+
+        <!-- Display Current Readings -->
+        <div class="display-section">
+            <p>Temperature: <span id="currentTemp">-</span>°C</p>
+            <p>Humidity: <span id="currentHumidity">-</span>%</p>
+        </div>
+
+        <!-- Stop Heating Button -->
+        <button id="stopBtn">Stop Heating</button>
+    </div>
+
+    <!-- JavaScript -->
+    <script src="{{ url_for('static', filename='scripts.js') }}"></script>
+</body>
+
+</html>

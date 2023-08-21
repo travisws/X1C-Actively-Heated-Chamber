@@ -1,0 +1,13 @@
+[Unit]
+Description=godspeed startup
+After=local-fs.target network.target
+
+[Service]
+WorkingDirectory=/root/
+User=root
+Type=forking
+
+ExecStart=/usr/bin/python3 web.py
+
+[Install]
+WantedBy=multi-user.target

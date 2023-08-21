@@ -1,0 +1,93 @@
+---
+- name: Configure godspeed Zero W
+  hosts: godspeed
+  tasks:
+
+    # Update and Upgrade
+    - name: Run apt update and dist-upgrade
+      ansible.builtin.apt:
+        update_cache: yes
+        upgrade: dist
+
+    - name: Run apt full-upgrade
+      ansible.builtin.apt:
+        name: "*"
+        state: latest
+        force_apt_get: yes
+        dpkg_options: force-confold,force-confdef
+
+    # Edit config.txt
+    - name: Add line to the top of /boot/config.txt
+      ansible.builtin.lineinfile:
+        path: /boot/config.txt
+        line: 'dtparam=i2c_arm=on'
+        insertbefore: BOF  # BOF means beginning of file
+
+    - name: Add lines to the bottom of /boot/config.txt
+      ansible.builtin.blockinfile:
+        path: /boot/config.txt
+        block: |
+          [pi02]
+          arm_freq=1200
+
+    # Install packages
+    - name: Install python3.11
+      ansible.builtin.apt:
+        name: python3.11
+        state: present
+
+    - name: Ensure pip3 is installed
+      ansible.builtin.apt:
+        name: python3-pip
+        state: present
+
+    - name: Install additional packages
+      ansible.builtin.apt:
+        name:
+          - python3-smbus
+          - i2c-tools
+        state: present
+
+    # Install python packages using pip3
+    - name: Install smbus2 using pip3
+      ansible.builtin.pip:
+        name: smbus2
+        executable: pip3
+
+    - name: Install Flask using pip3
+      ansible.builtin.pip:
+        name: Flask
+        executable: pip3
+
+    - name: Install RPi.GPIO using pip3
+      ansible.builtin.pip:
+        name: RPi.GPIO
+        executable: pip3
+
+    # Copy service file and start it
+    - name: Copy godspeed-startup.service to godspeed
+      ansible.builtin.copy:
+        src: godspeed-startup.service
+        dest: /lib/systemd/system/
+        owner: root
+        group: root
+        mode: '0644'
+
+    - name: Enable and start godspeed-startup service
+      ansible.builtin.systemd:
+        name: godspeed-startup.service
+        enabled: yes
+        state: started
+
+    # Copy web.py to godspeed and make it executable
+    - name: Copy web.py to godspeed
+      ansible.builtin.copy:
+        src: web.py
+        dest: /root/web.py
+        owner: root
+        group: root
+        mode: '0755'
+
+    # Reboot the godspeed
+    - name: Reboot godspeed
+      ansible.builtin.reboot:
