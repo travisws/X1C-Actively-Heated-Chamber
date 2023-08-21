@@ -30,15 +30,6 @@ Usage
 
 Access the web interface by navigating to your Raspberry Pi's IP address on port 5000. This allows you to set desired temperatures and durations while also providing real-time monitoring of chamber temperature and humidity.
 
-File Structure
-web.py
-static/
-│   ├── scripts.js
-│   └── styles.css
-templates/
-│   └── index.html
-
-
 License
 
 This project is licensed under a license that prohibits businesses from commercializing the idea. However, individual users are free to utilize the project without restrictions.
