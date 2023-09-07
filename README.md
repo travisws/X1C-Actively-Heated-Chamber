@@ -1,7 +1,7 @@
 X1C Actively Heated Chamber
 Description
 
-The X1C Actively Heated Chamber utilizes a Raspberry Pi Zero W to monitor and control 24v heating elements, maintaining an optimal temperature within the X1C chamber without external power sources. A web interface allows users to set a timer aligned with the expected print completion time. Once reached, the system deactivates the heating elements, letting the print cool naturally. This is particularly beneficial for prints using ABS plastic or other high-temperature filaments. Notably, the entire system operates using the X1C's integrated power supply.
+The X1C Actively Heated Chamber utilizes a Raspberry Pi Zero W to monitor and control 24v heating elements, maintaining an optimal temperature within the X1C chamber without external power sources. A web interface allows the users to set a timer aligned with the expected print completion time. Once reached, the system deactivates the heating elements, letting the print cool naturally. This is particularly beneficial for prints using ABS plastic or other high-temperature filaments. Notably, the entire system operates using the X1C's integrated power supply.
 
 Materials Required:
 
