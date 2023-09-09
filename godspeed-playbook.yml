@@ -1,5 +1,5 @@
 ---
-- name: Configure godspeed Zero W
+- name: Configure Raspberry Pi
   hosts: godspeed
   tasks:
 
@@ -30,17 +30,13 @@
           [pi02]
           arm_freq=1200
 
-    # Install packages
-    - name: Install python3.11
-      ansible.builtin.apt:
-        name: python3.11
-        state: present
-
+    # Ensure pip3 is installed
     - name: Ensure pip3 is installed
       ansible.builtin.apt:
         name: python3-pip
         state: present
 
+    # Install additional packages
     - name: Install additional packages
       ansible.builtin.apt:
         name:
@@ -64,8 +60,8 @@
         name: RPi.GPIO
         executable: pip3
 
-    # Copy service file and start it
-    - name: Copy godspeed-startup.service to godspeed
+    # Copy service file
+    - name: Copy godspeed-startup.service to Raspberry Pi
       ansible.builtin.copy:
         src: godspeed-startup.service
         dest: /lib/systemd/system/
@@ -73,14 +69,8 @@
         group: root
         mode: '0644'
 
-    - name: Enable and start godspeed-startup service
-      ansible.builtin.systemd:
-        name: godspeed-startup.service
-        enabled: yes
-        state: started
-
-    # Copy web.py to godspeed and make it executable
-    - name: Copy web.py to godspeed
+    # Copy web.py to Raspberry Pi and make it executable
+    - name: Copy web.py to Raspberry Pi
       ansible.builtin.copy:
         src: web.py
         dest: /root/web.py
@@ -88,6 +78,13 @@
         group: root
         mode: '0755'
 
-    # Reboot the godspeed
-    - name: Reboot godspeed
+    # Enable and start godspeed-startup service
+    - name: Enable and start godspeed-startup service
+      ansible.builtin.systemd:
+        name: godspeed-startup.service
+        enabled: yes
+        state: started
+
+    # Reboot the system
+    - name: Reboot Raspberry Pi
       ansible.builtin.reboot:
