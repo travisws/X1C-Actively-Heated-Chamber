@@ -1,45 +1,54 @@
 <!DOCTYPE html>
-<html lang="en">
-
+<html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Raspberry Pi Control</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
-    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+    <title>Temperature Control</title>
+    <!-- Add Material Design CSS here -->
 </head>
+<body style="background-color: #121212;">
+    <h1><span style="color: red;">Temperature: </span><span id="temperature" style="color: red;"></span></h1>
+    <h1><span style="color: red;">Humidity: </span><span id="humidity" style="color: red;"></span></h1>
+    <input type="number" id="set_temp" placeholder="Set Temp">
+    <button onclick="setTemperature()">Set Temp</button>
+    <button onclick="stopRelay()">Stop</button>
+    <input type="text" id="set_timer" placeholder="HH:MM">
+    <button onclick="setTimer()">Set Timer</button>
+    <button onclick="resetTimer()">Reset</button>
 
-<body>
-    <div class="container">
-        <!-- Toggle Button for Dark/Light Mode -->
-        <button id="toggleModeBtn">Toggle Light Mode</button>
+    <script>
+        function updateSensorData() {
+            fetch('/get_sensor_data').then(response => response.json()).then(data => {
+                document.getElementById('temperature').innerText = data.temperature;
+                document.getElementById('humidity').innerText = data.humidity;
+            });
+        }
 
-        <!-- Set Temperature -->
-        <div class="control-section">
-            <label for="setTemp">Set Temperature:</label>
-            <input type="number" id="setTemp" step="0.1">
-            <button id="setTempBtn">Set</button>
-        </div>
+        function stopRelay() {
+            fetch('/stop_relay');
+        }
 
-        <!-- Set Timer -->
-        <div class="control-section">
-            <label for="setTimer">Set Timer (HH:MM):</label>
-            <input type="text" id="setTimer" pattern="\d{1,2}:\d{2}">
-            <button id="setTimerBtn">Set Timer</button>
-        </div>
+        function setTemperature() {
+            const temp = document.getElementById('set_temp').value;
+            fetch('/set_temp', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+                body: `set_temp=${temp}`
+            });
+        }
 
-        <!-- Display Current Readings -->
-        <div class="display-section">
-            <p>Temperature: <span id="currentTemp">-</span>°C</p>
-            <p>Humidity: <span id="currentHumidity">-</span>%</p>
-        </div>
+        function setTimer() {
+            const time = document.getElementById('set_timer').value;
+            fetch('/set_timer', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+                body: `time=${time}`
+            });
+        }
 
-        <!-- Stop Heating Button -->
-        <button id="stopBtn">Stop Heating</button>
-    </div>
+        function resetTimer() {
+            fetch('/reset_timer');
+        }
 
-    <!-- JavaScript -->
-    <script src="{{ url_for('static', filename='scripts.js') }}"></script>
+        setInterval(updateSensorData, 3000);
+    </script>
 </body>
-
 </html>
