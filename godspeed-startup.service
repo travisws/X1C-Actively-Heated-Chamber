@@ -3,7 +3,7 @@ Description=godspeed startup
 After=local-fs.target network.target
 
 [Service]
-WorkingDirectory=/root/Actively-Heated-Chamber
+WorkingDirectory=/root/X1C-Actively-Heated-Chamber
 User=root
 Type=forking
 
