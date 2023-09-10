@@ -5,103 +5,69 @@ import RPi.GPIO as GPIO
 from smbus2 import SMBus, i2c_msg
 
 app = Flask(__name__)
-
-# Setting up the GPIO pins for the Raspberry Pi
 GPIO.setmode(GPIO.BCM)
 GPIO.setup(4, GPIO.OUT)
-GPIO.output(4, GPIO.LOW)
 
-# Initial values for temperature, humidity, and set temperature
-current_temp = 0
-current_humidity = 0
-set_temp = 25  # default temperature in Celsius
-end_time = None  # for timer functionality
+# Global variable to store set temperature
+set_temp = 25.0
+timer_end_time = None
 
-class AHT20:
-    # Constants related to the AHT20 temperature and humidity sensor
-    _AHT20_ADDRESS = 0x38
-    _AHT20_CALIBRATE = [0xE1, 0x08, 0x00]
-    _AHT20_START = [0xAC, 0x33, 0x00]
+# Simulated AHT20 sensor reading
+def read_sensor():
+    return {"temperature": 25.0, "humidity": 50.0}
 
-    def __init__(self):
-        # Initializing the I2C bus
-        self.bus = SMBus(1)
-        self.calibrate()
-
-    def calibrate(self):
-        # Sending calibration command to the AHT20 sensor
-        self.bus.write_i2c_block_data(self._AHT20_ADDRESS, 0, self._AHT20_CALIBRATE)
-        time.sleep(0.5)
-
-    def read(self):
-        # Reading temperature and humidity values from the AHT20 sensor
-        self.bus.write_i2c_block_data(self._AHT20_ADDRESS, 0, self._AHT20_START)
-        time.sleep(0.1)
-        data = self.bus.read_i2c_block_data(self._AHT20_ADDRESS, 0, 6)
-        humidity = ((data[1] << 12) | (data[2] << 4) | (data[3] >> 4)) * 100 / (1 << 20)
-        temperature = (((data[3] & 0x0F) << 16) | (data[4] << 8) | data[5]) * 200 / (1 << 20) - 50
-        return temperature, humidity
-
-def read_aht20_data():
-    # Continuous reading of temperature and humidity data
-    global current_temp, current_humidity
-    sensor = AHT20()
+# Control relay
+def control_relay():
+    global set_temp, timer_end_time
     while True:
-        current_temp, current_humidity = sensor.read()
-        # Control the GPIO output based on temperature
-        if current_temp > set_temp:
+        sensor_data = read_sensor()
+        if sensor_data["temperature"] >= set_temp:
             GPIO.output(4, GPIO.LOW)
         else:
             GPIO.output(4, GPIO.HIGH)
-        time.sleep(5)
-
-def timer_monitor():
-    # Monitor if the timer has reached its end time
-    global end_time
-    while True:
-        if end_time and datetime.now() > end_time:
+        
+        if timer_end_time and time.time() >= timer_end_time:
             GPIO.output(4, GPIO.LOW)
-        time.sleep(10)
+            timer_end_time = None
+
+        time.sleep(5)
 
 @app.route('/')
 def index():
-    # Render the main webpage
     return render_template('index.html')
 
-@app.route('/get_data', methods=['GET'])
-def get_data():
-    return jsonify({'temp': current_temp, 'humidity': current_humidity})
+@app.route('/get_sensor_data')
+def get_sensor_data():
+    return jsonify(read_sensor())
 
-# API endpoint to update the target temperature
-@app.route('/update_temp', methods=['POST'])
-def update_temp():
+@app.route('/stop_relay')
+def stop_relay():
     global set_temp
-    try:
-        set_temp = float(request.form.get('temperature'))
-        return jsonify({'success': True})
-    except:
-        return jsonify({'success': False})
+    GPIO.output(4, GPIO.LOW)
+    set_temp = 5.0
+    return jsonify({"status": "stopped"})
 
-# API endpoint to set a timer for the heater
+@app.route('/set_temp', methods=['POST'])
+def set_temperature():
+    global set_temp
+    set_temp = float(request.form.get("set_temp", 25.0))
+    return jsonify({"status": "temperature set"})
+
 @app.route('/set_timer', methods=['POST'])
 def set_timer():
-    global end_time
-    timer_value = request.form.get('timer')
-    try:
-        hours, minutes = map(int, timer_value.split(":"))
-        end_time = datetime.now() + timedelta(hours=hours, minutes=minutes)
-        return jsonify({'success': True})
-    except:
-        return jsonify({'success': False})
+    global timer_end_time
+    hh_mm = request.form.get('time')
+    hh, mm = map(int, hh_mm.split(":"))
+    timer_end_time = time.time() + hh * 3600 + mm * 60
+    return jsonify({"status": "timer set"})
 
-# API endpoint to immediately stop the heating
-@app.route('/stop_heating', methods=['POST'])
-def stop_heating():
-    GPIO.output(4, GPIO.LOW)
-    return jsonify({'success': True})
+@app.route('/reset_timer')
+def reset_timer():
+    global timer_end_time
+    timer_end_time = None
+    return jsonify({"status": "timer reset"})
 
-# Start reading data and monitoring timer in separate threads
 if __name__ == '__main__':
-    threading.Thread(target=read_aht20_data).start()
-    threading.Thread(target=timer_monitor).start()
-    app.run(host='0.0.0.0')
+    t = threading.Thread(target=control_relay)
+    t.start()
+    app.run(host='0.0.0.0', port=5000)
