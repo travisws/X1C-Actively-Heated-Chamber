@@ -69,15 +69,6 @@
         group: root
         mode: '0644'
 
-    # Copy web.py to Raspberry Pi and make it executable
-    - name: Copy web.py to Raspberry Pi
-      ansible.builtin.copy:
-        src: web.py
-        dest: /root/web.py
-        owner: root
-        group: root
-        mode: '0755'
-
     # Copy X1C-Actively-Heated-Chamber folder to Raspberry Pi
     - name: Copy X1C-Actively-Heated-Chamber folder to Raspberry Pi
       ansible.builtin.copy:
