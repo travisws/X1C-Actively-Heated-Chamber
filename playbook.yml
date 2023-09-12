@@ -36,6 +36,11 @@
         name: python3-pip
         state: present
 
+    # Upgrade pip
+    - name: Upgrade pip
+      ansible.builtin.command:
+        cmd: python3 -m pip install --upgrade pip
+
     # Install additional packages
     - name: Install additional packages
       ansible.builtin.apt:
@@ -72,7 +77,7 @@
     # Copy X1C-Actively-Heated-Chamber folder to Raspberry Pi
     - name: Copy X1C-Actively-Heated-Chamber folder to Raspberry Pi
       ansible.builtin.copy:
-        src: /root/X1C-Actively-Heated-Chamber/
+        src: /root/X1C-Actively-Heated-Chamber/X1C-Actively-Heated-Chamber
         dest: /root/X1C-Actively-Heated-Chamber
         owner: root
         group: root
@@ -80,18 +85,18 @@
         recursive: yes
 
     # Copy service file
-    - name: Copy godspeed-startup.service to Raspberry Pi
+    - name: Copy printer.service to Raspberry Pi
       ansible.builtin.copy:
-        src: godspeed-startup.service
+        src: printer.service
         dest: /lib/systemd/system/
         owner: root
         group: root
         mode: '0644'
 
     # Enable and start godspeed-startup service
-    - name: Enable and start godspeed-startup service
+    - name: Enable and start service on the Raspberry Pi
       ansible.builtin.systemd:
-        name: godspeed-startup.service
+        name: printer.service
         enabled: yes
         state: started
 
