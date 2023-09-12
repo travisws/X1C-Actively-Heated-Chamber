@@ -5,9 +5,8 @@ After=local-fs.target network.target
 [Service]
 WorkingDirectory=/root/
 User=root
-Type=forking
-
-ExecStart=/usr/bin/python3 app.py
+Type=simple
+ExecStart=/usr/bin/python3 /root/app.py
 
 [Install]
 WantedBy=multi-user.target

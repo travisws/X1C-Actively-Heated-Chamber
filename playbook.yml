@@ -92,6 +92,11 @@
         group: root
         mode: '0644'
 
+    # Reload systemd daemon
+    - name: Reload systemd daemon
+      ansible.builtin.command:
+        cmd: systemctl daemon-reload
+
     # Enable and start godspeed-startup service
     - name: Enable and start service on the Raspberry Pi
       ansible.builtin.systemd:
