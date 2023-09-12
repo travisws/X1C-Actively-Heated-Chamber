@@ -69,7 +69,7 @@
     - name: Update X1C-Actively-Heated-Chamber repo on localhost
       ansible.builtin.git:
         repo: 'https://github.com/travisws/X1C-Actively-Heated-Chamber.git'
-        dest: '/root/X1C-Actively-Heated-Chamber/'
+        dest: '/root/tmp'
         force: yes
         update: yes
       delegate_to: localhost
