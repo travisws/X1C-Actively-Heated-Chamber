@@ -1,5 +1,5 @@
 [Unit]
-Description=godspeed startup
+Description=X1C-Actively-Heated-Chamber Python3 Startup Service
 After=local-fs.target network.target
 
 [Service]
@@ -7,7 +7,7 @@ WorkingDirectory=/root/X1C-Actively-Heated-Chamber
 User=root
 Type=forking
 
-ExecStart=/usr/bin/python3 web.py
+ExecStart=/usr/bin/python3 app.py
 
 [Install]
 WantedBy=multi-user.target

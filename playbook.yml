@@ -60,14 +60,14 @@
         name: RPi.GPIO
         executable: pip3
 
-    # Copy service file
-    - name: Copy godspeed-startup.service to Raspberry Pi
-      ansible.builtin.copy:
-        src: godspeed-startup.service
-        dest: /lib/systemd/system/
-        owner: root
-        group: root
-        mode: '0644'
+    # Perform git pull on localhost for X1C-Actively-Heated-Chamber
+    - name: Update X1C-Actively-Heated-Chamber repo on localhost
+      ansible.builtin.git:
+        repo: 'https://github.com/travisws/X1C-Actively-Heated-Chamber.git'
+        dest: '/root/X1C-Actively-Heated-Chamber/'
+        force: yes
+        update: yes
+      delegate_to: localhost
 
     # Copy X1C-Actively-Heated-Chamber folder to Raspberry Pi
     - name: Copy X1C-Actively-Heated-Chamber folder to Raspberry Pi
@@ -78,6 +78,15 @@
         group: root
         mode: '0755'
         recursive: yes
+
+    # Copy service file
+    - name: Copy godspeed-startup.service to Raspberry Pi
+      ansible.builtin.copy:
+        src: godspeed-startup.service
+        dest: /lib/systemd/system/
+        owner: root
+        group: root
+        mode: '0644'
 
     # Enable and start godspeed-startup service
     - name: Enable and start godspeed-startup service
