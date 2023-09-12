@@ -3,7 +3,7 @@ Description=X1C-Actively-Heated-Chamber Python3 Startup Service
 After=local-fs.target network.target
 
 [Service]
-WorkingDirectory=/root/X1C-Actively-Heated-Chamber
+WorkingDirectory=/root/
 User=root
 Type=forking
 
