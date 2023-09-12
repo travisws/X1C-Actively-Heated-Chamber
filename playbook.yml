@@ -69,20 +69,19 @@
     - name: Update X1C-Actively-Heated-Chamber repo on localhost
       ansible.builtin.git:
         repo: 'https://github.com/travisws/X1C-Actively-Heated-Chamber.git'
-        dest: '/root/tmp'
+        dest: '/root/X1C-Actively-Heated-Chamber'
         force: yes
         update: yes
       delegate_to: localhost
 
-    # Copy X1C-Actively-Heated-Chamber folder to Raspberry Pi
+      # Copy X1C-Actively-Heated-Chamber folder to Raspberry Pi
     - name: Copy X1C-Actively-Heated-Chamber folder to Raspberry Pi
       ansible.builtin.copy:
-        src: /root/X1C-Actively-Heated-Chamber/X1C-Actively-Heated-Chamber
-        dest: /root/X1C-Actively-Heated-Chamber
+        src: /root/X1C-Actively-Heated-Chamber/X1C-Actively-Heated-Chamber/
+        dest: /root/
         owner: root
         group: root
         mode: '0755'
-        recursive: yes
 
     # Copy service file
     - name: Copy printer.service to Raspberry Pi
