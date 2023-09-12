@@ -9,12 +9,33 @@ GPIO.setmode(GPIO.BCM)
 GPIO.setup(4, GPIO.OUT)
 
 # Global variable to store set temperature
-set_temp = 25.0
+set_temp = 5.0
 timer_end_time = None
 
-# Simulated AHT20 sensor reading
+# Initialize I2C bus
+bus = SMBus(1)
+
+# AHT20 sensor I2C address
+AHT20_ADDR = 0x38
+
+# Initialize AHT20 sensor
+def initialize_sensor():
+    bus.write_i2c_block_data(AHT20_ADDR, 0xE1, [0x08, 0x00])
+
+# Read temperature and humidity from AHT20
 def read_sensor():
-    return {"temperature": 25.0, "humidity": 50.0}
+    initialize_sensor()
+    bus.write_i2c_block_data(AHT20_ADDR, 0xAC, [0x33, 0x00])
+    time.sleep(0.25)
+    data = bus.read_i2c_block_data(AHT20_ADDR, 0x00, 6)
+    
+    humidity = ((data[1] << 12) + (data[2] << 4) + (data[3] >> 4)) * 100 / 0x100000
+    temperature = (((data[3] & 0x0F) << 16) + (data[4] << 8) + data[5]) * 200 / 0x100000 - 50
+    
+    humidity = round(humidity, 2)
+    temperature = round(temperature, 2)
+
+    return {"temperature": temperature, "humidity": humidity}
 
 # Control relay
 def control_relay():
@@ -25,9 +46,10 @@ def control_relay():
             GPIO.output(4, GPIO.LOW)
         else:
             GPIO.output(4, GPIO.HIGH)
-        
+
         if timer_end_time and time.time() >= timer_end_time:
             GPIO.output(4, GPIO.LOW)
+            set_temp = 5.0
             timer_end_time = None
 
         time.sleep(5)
@@ -50,7 +72,7 @@ def stop_relay():
 @app.route('/set_temp', methods=['POST'])
 def set_temperature():
     global set_temp
-    set_temp = float(request.form.get("set_temp", 25.0))
+    set_temp = float(request.form.get("set_temp", 5.0))
     return jsonify({"status": "temperature set"})
 
 @app.route('/set_timer', methods=['POST'])
