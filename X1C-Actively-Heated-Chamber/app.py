@@ -4,6 +4,7 @@ import time
 import RPi.GPIO as GPIO
 from smbus2 import SMBus, i2c_msg
 
+# Initialize Flask app and GPIO settings
 app = Flask(__name__)
 GPIO.setmode(GPIO.BCM)
 GPIO.setup(4, GPIO.OUT)
@@ -40,12 +41,12 @@ def read_sensor():
 
 # Control relay
 def control_relay():
-    global set_temp, timer_end_time, relay_status  # Modified
+    global set_temp, timer_end_time, relay_status
     while True:
         sensor_data = read_sensor()
         if sensor_data["temperature"] >= set_temp:
             GPIO.output(4, GPIO.LOW)
-            relay_status = False  # Modified
+            relay_status = False  
         else:
             GPIO.output(4, GPIO.HIGH)
             relay_status = True 
@@ -57,6 +58,7 @@ def control_relay():
 
         time.sleep(5)
 
+#Flask routes for various functionalities
 @app.route('/')
 def index():
     return render_template('index.html')
@@ -96,6 +98,7 @@ def reset_timer():
     timer_end_time = None
     return jsonify({"status": "timer reset"})
 
+#Main function to start Flask app and control relay thread
 if __name__ == '__main__':
     t = threading.Thread(target=control_relay)
     t.start()
