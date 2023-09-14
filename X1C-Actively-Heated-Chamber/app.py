@@ -10,6 +10,7 @@ GPIO.setup(4, GPIO.OUT)
 
 # Global variable to store set temperature
 set_temp = 5.0
+relay_status = False
 timer_end_time = None
 
 # Initialize I2C bus
@@ -39,13 +40,15 @@ def read_sensor():
 
 # Control relay
 def control_relay():
-    global set_temp, timer_end_time
+    global set_temp, timer_end_time, relay_status  # Modified
     while True:
         sensor_data = read_sensor()
         if sensor_data["temperature"] >= set_temp:
             GPIO.output(4, GPIO.LOW)
+            relay_status = False  # Modified
         else:
             GPIO.output(4, GPIO.HIGH)
+            relay_status = True 
 
         if timer_end_time and time.time() >= timer_end_time:
             GPIO.output(4, GPIO.LOW)
@@ -68,6 +71,10 @@ def stop_relay():
     GPIO.output(4, GPIO.LOW)
     set_temp = 5.0
     return jsonify({"status": "stopped"})
+
+@app.route('/get_status')  # New route
+def get_status():
+    return jsonify({"set_temp": set_temp, "relay_status": relay_status})
 
 @app.route('/set_temp', methods=['POST'])
 def set_temperature():

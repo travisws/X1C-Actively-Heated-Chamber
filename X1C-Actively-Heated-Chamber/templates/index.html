@@ -70,10 +70,23 @@
                 width: auto;
             }
         }
+
+        .relay-status-circle {
+            height: 30px;
+            width: 30px;
+            border-radius: 50%;
+            display: inline-block;
+            margin-right: 10px;
+        }
     </style>
 </head>
 
 <body>
+    <div class="control-group">
+        <h1>Set Temp: <span id="set_temp_display"></span></h1>
+        <span class="relay-status-circle" id="relay_status"></span> Relay Status
+    </div>
+
     <h1>Temperature: <span id="temperature"></span></h1>
     <h1>Humidity: <span id="humidity"></span></h1>
 
@@ -102,6 +115,14 @@
             fetch('/stop_relay');
         }
 
+        function updateStatus() {
+            fetch('/get_status').then(response => response.json()).then(data => {
+                document.getElementById('set_temp_display').innerText = data.set_temp;
+                const relayStatusElement = document.getElementById('relay_status');
+                relayStatusElement.style.backgroundColor = data.relay_status ? 'red' : 'gray';
+            });
+        }
+
         function setTemperature() {
             const temp = document.getElementById('set_temp').value;
             fetch('/set_temp', {
@@ -125,6 +146,7 @@
         }
 
         setInterval(updateSensorData, 3000);
+        setInterval(updateStatus, 3000); 
     </script>
 </body>
 
