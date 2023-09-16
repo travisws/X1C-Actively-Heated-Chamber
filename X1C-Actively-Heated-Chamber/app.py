@@ -5,7 +5,7 @@ import RPi.GPIO as GPIO
 from smbus2 import SMBus, i2c_msg
 
 # Initialize Flask app and GPIO settings
-app = Flask(__name__)
+app = Flask(__name__, static_url_path='/static')
 GPIO.setmode(GPIO.BCM)
 GPIO.setup(4, GPIO.OUT)
 
