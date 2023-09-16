@@ -1,6 +1,6 @@
 ---
 - name: Configure Raspberry Pi
-  hosts: godspeed
+  hosts: printer-1
   tasks:
 
     # Update and Upgrade
