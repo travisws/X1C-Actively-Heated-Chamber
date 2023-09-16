@@ -104,6 +104,9 @@
     <button onclick="resetTimer()">Reset</button>
 
     <script>
+        let sensorDataInterval;
+        let statusInterval;
+
         function updateSensorData() {
             fetch('/get_sensor_data').then(response => response.json()).then(data => {
                 document.getElementById('temperature').innerText = data.temperature;
@@ -145,9 +148,28 @@
             fetch('/reset_timer');
         }
 
-        setInterval(updateSensorData, 3000);
-        setInterval(updateStatus, 3000); 
+        function startIntervals() {
+            sensorDataInterval = setInterval(updateSensorData, 3000);
+            statusInterval = setInterval(updateStatus, 3000);
+        }
+
+        function stopIntervals() {
+            clearInterval(sensorDataInterval);
+            clearInterval(statusInterval);
+        }
+
+        document.addEventListener("visibilitychange", function () {
+            if (document.hidden) {
+                stopIntervals();
+            } else {
+                startIntervals();
+            }
+        });
+
+        // Start the intervals when the page loads
+        startIntervals();
     </script>
+
 </body>
 
 </html>
