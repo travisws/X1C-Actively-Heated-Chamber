@@ -54,13 +54,15 @@ function stopIntervals() {
     clearInterval(statusInterval);
 }
 
-document.addEventListener("visibilitychange", function () {
+function handleVisibilityChange() {
     if (document.hidden) {
         stopIntervals();
     } else {
         startIntervals();
     }
-});
+}
+
+document.addEventListener("visibilitychange", handleVisibilityChange);
 
 // Start the intervals when the page loads
 startIntervals();
