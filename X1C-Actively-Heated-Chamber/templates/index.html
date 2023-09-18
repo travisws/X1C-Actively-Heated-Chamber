@@ -17,19 +17,23 @@
     <h1>Humidity: <span id="humidity"></span></h1>
 
     <div class="control-group">
-        <input type="number" id="set_temp" placeholder="Set Temp">
-        <button onclick="setValue('/set_temp', 'set_temp')">Set Temp</button>
+        <input type="number" id="set_temp" placeholder="Set Temp" onkeydown="handleEnter(event, 'set_temp')">
+        <button id="set_temp_button" onclick="setValue('/set_temp', 'set_temp')">Set Temp</button>
     </div>
 
     <div class="control-group">
-        <input type="text" id="set_timer" placeholder="HH:MM">
-        <button onclick="setValue('/set_timer', 'time')">Set Timer</button>
+        <input type="text" id="set_timer" placeholder="HH:MM" onkeydown="handleEnter(event, 'set_timer')">
+        <button id="set_timer_button" onclick="setValue('/set_timer', 'time')">Set Timer</button>
     </div>
 
     <button onclick="stopRelay()">Stop!!!</button>
     <button onclick="resetTimer()">Reset</button>
 
     <script src="static/script.js"></script>
+    <script>
+        const setTempInput = document.getElementById('set_temp');
+        console.log(setTempInput)
+    </script>
 </body>
 
 </html>

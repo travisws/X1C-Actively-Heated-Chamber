@@ -9,6 +9,14 @@ const setTimerInput = document.getElementById('set_timer');
 let sensorDataInterval;
 let statusInterval;
 
+function handleEnter(event, inputId) {
+    if (event.key === 'Enter') {
+        const buttonId = inputId === 'set_temp' ? 'set_temp_button' : 'set_timer_button';
+        document.getElementById(buttonId).click();
+        event.preventDefault(); // Prevent form submission
+    }
+}
+
 function updateSensorData() {
     fetch('/get_sensor_data')
         .then(response => response.json())
